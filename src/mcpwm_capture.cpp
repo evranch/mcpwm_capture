@@ -98,7 +98,7 @@ mcpwm_capture::mcpwm_capture(mcpwm_unit_t unit, int set_pin)
 
 uint32_t mcpwm_capture::calcSpeed()
 {
-    if (this->period && (millis() - this->last_pulse < 500))
+    if (this->period && (millis() - this->last_pulse < this->timeout_millis))
     {
         this->freq = 1000000 / (this->period / 80); // Scale period down from 80Mhz counter
     }
@@ -111,10 +111,15 @@ uint32_t mcpwm_capture::calcSpeed()
 
 uint8_t mcpwm_capture::calcDC()
 {
-    if (this->low_pulse > 0)
+    if (this->low_pulse > 0 && (millis() - this->last_pulse < this->timeout_millis))
         this->dc = this->high_pulse * 100 / (this->high_pulse + this->low_pulse);
     else
         this->dc = 0;
 
     return this->dc;
+}
+
+void mcpwm_capture::setTimeout(int timeout)
+{
+    this->timeout_millis = timeout;
 }

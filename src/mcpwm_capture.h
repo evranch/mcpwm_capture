@@ -19,11 +19,13 @@ public:
 	uint8_t dc = 0;
 
 	int sense_pin = 0;
+	int timeout_millis = 500;
 	mcpwm_unit_t mcpwm_unit = MCPWM_UNIT_0;
 
 	mcpwm_capture(mcpwm_unit_t unit, int set_pin);
 	uint32_t calcSpeed();
 	uint8_t calcDC();
+	void setTimeout(int timeout);
 };
 
 static bool mcpwm_p_isr_1(mcpwm_unit_t mcpwm,
