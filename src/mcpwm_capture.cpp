@@ -1,6 +1,13 @@
 #include "mcpwm_capture.h"
 #include "esp_timer.h"
 
+template <class T>
+T ema(T new_value, T long_term, int num_samples)
+{
+    T return_val = (long_term * (num_samples - 1) + new_value) / num_samples;
+    return return_val;
+}
+
 bool mcpwm_capture::channel0_init = false;
 bool mcpwm_capture::channel1_init = false;
 
@@ -106,7 +113,15 @@ uint32_t mcpwm_capture::calcSpeed()
     {
         this->freq = 0;
     }
+
+    this->freq_ema = ema(this->freq, this->freq_ema, this->ema_samples);
+
     return this->freq;
+}
+
+uint32_t mcpwm_capture::speed_EMA()
+{
+    return this->freq_ema;
 }
 
 uint8_t mcpwm_capture::calcDC()
@@ -116,10 +131,23 @@ uint8_t mcpwm_capture::calcDC()
     else
         this->dc = 0;
 
+    this->dc_ema = ema(this->dc, this->dc_ema, this->ema_samples);
+
     return this->dc;
+}
+
+uint8_t mcpwm_capture::DC_EMA()
+{
+    return this->dc_ema;
 }
 
 void mcpwm_capture::setTimeout(int timeout)
 {
     this->timeout_millis = timeout;
+}
+
+void mcpwm_capture::calculate()
+{
+    calcSpeed();
+    calcDC();
 }
