@@ -1,5 +1,5 @@
-#ifndef MCPWMISR_H
-#define MCPWMISR_H
+#ifndef MCPWM_CAPTURE_H
+#define MCPWM_CAPTURE_H
 
 #include "driver/mcpwm.h"
 #include "Arduino.h"
